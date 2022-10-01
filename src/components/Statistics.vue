@@ -1,0 +1,1 @@
+<!-- TODO create statistics component with Total todos, completed and not completed todos -->
