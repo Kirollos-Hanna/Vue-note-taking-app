@@ -28,5 +28,10 @@ npm run dev
 npm run build
 ```
 
+### Run Cypress End-to-End Tests
+```sh
+./node_modules/.bin/cypress open
+```
+
 ### See it in Action
 ![App Demo](./Demo.gif)
