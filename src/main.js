@@ -3,4 +3,6 @@ import App from './App.vue'
 
 import './assets/main.css'
 
-createApp(App).mount('#app')
+import store from './store/store.js'
+
+createApp(App).use(store).mount('#app')
