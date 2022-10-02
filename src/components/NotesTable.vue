@@ -4,18 +4,51 @@
             <thead>
                 <tr class="head-row">
                     <td>
-                        <label class="form-control">
-                            <input class="note-item-checkbox" v-model="mainCheckBoxCheck" type="checkbox"
-                                @click="showAllDeleteAction" />ID
-                        </label>
+                        <div class="head-cell-container">
+                            <label class="form-control">
+                                <input class="note-item-checkbox" v-model="mainCheckBoxCheck" type="checkbox"
+                                    @click="showAllDeleteAction" />
+                                <p>ID</p>
+                            </label>
+                            <div class="sorting-arrows" @click="sortColumn('id')">
+                                <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'id'}"></div>
+                                <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'id'}"></div>
+                            </div>
+                        </div>
                     </td>
-                    <td>Title</td>
-                    <td>Content</td>
-                    <td class="last-column">Status</td>
+                    <td>
+                        <div class="head-cell-container">
+                            <p>Title</p>
+                            <div class="sorting-arrows" @click="sortColumn('title')">
+                                <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'title'}"></div>
+                                <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'title'}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="head-cell-container">
+                            <p>Content</p>
+                            <div class="sorting-arrows" @click="sortColumn('content')">
+                                <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'content'}"></div>
+                                <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'content'}">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="last-column">
+                        <div class="head-cell-container">
+                            <p>Status</p>
+                            <div class="sorting-arrows" @click="sortColumn('status')">
+                                <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'status'}"></div>
+                                <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'status'}">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </thead>
             <tbody>
-                <tr class="body-row" v-for="note in notes">
+                <tr class="body-row" v-for="note in sortedNotes">
                     <td>
                         <label class="form-control">
                             <input class="note-item-checkbox" v-model="allCheckedBoxes[note['id']]" type="checkbox"
@@ -74,7 +107,6 @@
 }
 
 .body-row .form-control {
-
     color: #0070A2;
 }
 
@@ -114,6 +146,44 @@
 .note-item-checkbox:checked::before {
     transform: scale(1);
 }
+
+.head-cell-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sorting-arrows {
+    cursor: pointer;
+}
+
+.up-arrow {
+    width: 0;
+    height: 0;
+    border: solid 5px transparent;
+    background: transparent;
+    border-bottom: solid 7px #D8D8D8;
+    border-top-width: 0;
+    clip-path: polygon(0 100%, 50% 0, 100% 100%, 80% 100%, 50% 40%, 20% 100%);
+}
+
+.down-arrow {
+    width: 0;
+    height: 0;
+    border: solid 5px transparent;
+    background: transparent;
+    border-top: solid 7px #adacaf;
+    border-bottom-width: 0;
+    margin-top: 1px;
+    clip-path: polygon(0 0, 50% 100%, 100% 0, 80% 0, 50% 60%, 20% 0);
+}
+
+.sorted-up-arrow {
+    border-bottom: solid 7px #adacaf;
+}
+
+.sorted-down-arrow {
+    border-top: solid 7px #D8D8D8;
+}
 </style>
 
 <script>
@@ -122,6 +192,8 @@ export default {
         return {
             mainCheckBoxCheck: false,
             allCheckedBoxes: [],
+            sortingColumn: "",
+            sortedNotes: [],
         }
     },
     props: {
@@ -131,6 +203,7 @@ export default {
         for (let i = 0; i < this.notes.length; i++) {
             this.allCheckedBoxes[this.notes[i]["id"]] = false
         }
+        this.sortedNotes = [...this.notes]
     },
     methods: {
         showAllDeleteAction() {
@@ -207,6 +280,34 @@ export default {
                 }
             })
             return noteMatch
+        },
+        sortColumn(columnName) {
+            if (columnName) {
+                if (this.sortingColumn != columnName) {
+                    this.sortingColumn = columnName
+                } else {
+                    this.sortingColumn = ""
+                }
+            }
+            
+            if (this.sortingColumn && this.sortingColumn !== "id") {
+                let notesToSort = [...this.notes]
+                this.sortedNotes = notesToSort.sort((a, b) => {
+                    const nameA = a[this.sortingColumn].toLowerCase(); // ignore upper and lowercase
+                    const nameB = b[this.sortingColumn].toLowerCase(); // ignore upper and lowercase
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB) {
+                        return 1;
+                    }
+                    // names must be equal
+                    return 0;
+                })
+            } else {
+                this.sortedNotes = [...this.notes]
+            }
+            console.log(this.sortedNotes)
         }
     },
     computed: {
@@ -230,6 +331,7 @@ export default {
             handler(newVal, oldVal) {
                 if (newVal.length) {
                     this.allCheckedBoxes[newVal[newVal.length - 1]["id"]] = false
+                    this.sortColumn()
                 }
             },
             deep: true,
@@ -255,7 +357,7 @@ export default {
                             this.allCheckedBoxes.splice(note["id"], 1)
                         }
                     })
-                    
+
                     this.$store.commit('stopDeletion')
                     this.$store.commit('cancelDeleteActionPanel')
                 }

@@ -3,9 +3,12 @@
         <div class="add-note-modal" v-if="displayModal">
             <form method="dialog" class="add-note-form">
                 <h2>Add note</h2>
-                <input type="text" class="note-title" placeholder="Add Title" v-model="title">
-                <textarea placeholder="Add Content" v-model="content" name="note-content" id="note-content" cols="20"
-                    rows="4"></textarea>
+                <input type="text" class="note-title" :class="{'error-input': emptyTitle}" placeholder="Add Title"
+                    v-model="title">
+                <p v-if="emptyTitle" class="error-text">Missing Title</p>
+                <textarea placeholder="Add Content" v-model="content" name="note-content" class="note-content" cols="20"
+                    rows="4" :class="{'error-input': emptyContent}"></textarea>
+                <p v-if="emptyContent" class="error-text">Missing Content</p>
                 <div>
                     <button class="note-save-button" @click="saveDialog">Save</button>
                     <button class="note-cancel-button" @click="cancelDialog">Cancel</button>
@@ -70,7 +73,7 @@
     margin-bottom: 25px;
 }
 
-#note-content {
+.note-content {
     resize: none;
     margin-bottom: 25px;
     padding-top: 10px;
@@ -81,7 +84,7 @@
     margin-bottom: 25px;
 }
 
-#note-content,
+.note-content,
 .note-title {
     padding-left: 10px;
     border: 1px solid #b4b4b4;
@@ -112,6 +115,17 @@
     color: #00689D;
     border: none;
 }
+
+.error-input {
+    border-color: red;
+    margin-bottom: 2px;
+}
+
+.error-text {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
 </style>
 
 <script>
@@ -119,28 +133,58 @@ export default {
     data() {
         return {
             title: "",
-            content: ""
+            content: "",
+            emptyTitle: false,
+            emptyContent: false,
         }
     },
     methods: {
         cancelDialog() {
             this.$store.commit('cancelNoteDialog')
         },
+        validInput() {
+            if (this.title.length === 0) {
+                this.emptyTitle = true
+            }
+            if (this.content.length === 0) {
+                this.emptyContent = true
+            }
+
+            if (this.emptyContent || this.emptyTitle) {
+                return false
+            }
+
+            return true
+        },
         saveDialog() {
-            this.$store.commit('saveNoteDialog',
-                {
-                    "title": this.title,
-                    "content": this.content
-                }
-            )
-            this.title = ""
-            this.content = ""
-            this.$store.commit('cancelNoteDialog')
+            if (this.validInput()) {
+                this.$store.commit('saveNoteDialog',
+                    {
+                        "title": this.title,
+                        "content": this.content
+                    }
+                )
+                this.title = ""
+                this.content = ""
+                this.$store.commit('cancelNoteDialog')
+            }
         }
     },
     computed: {
         displayModal() {
             return this.$store.state.displayAddNoteModal
+        }
+    },
+    watch: {
+        title(newVal) {
+            if (newVal.length > 0) {
+                this.emptyTitle = false
+            }
+        },
+        content(newVal) {
+            if (newVal.length > 0) {
+                this.emptyContent = false
+            }
         }
     }
 }
