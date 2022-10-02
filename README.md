@@ -1,6 +1,6 @@
 # note-app
 
-This template should help get you started developing with Vue 3 in Vite.
+A simple Vue 3 note taking app
 
 ## Recommended IDE Setup
 
@@ -27,3 +27,6 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### See it in Action
+![App Demo](./Demo.gif)
