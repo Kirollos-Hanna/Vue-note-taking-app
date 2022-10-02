@@ -12,8 +12,8 @@ import IconExclamation from '../icons/IconExclamation.vue';
                 <p>Do you want to delete this note?</p>
             </div>
             <div class="action-buttons-container">
-                <button class="no-action-button" @click="cancelPanel">No</button>
-                <button class="yes-action-button" @click="deleteSelected">Yes</button>
+                <button class="no-action-button" @click="cancelPanel" data-cy="no-delete">No</button>
+                <button class="yes-action-button" @click="deleteSelected" data-cy="yes-delete">Yes</button>
             </div>
         </div>
     </Transition>

@@ -10,8 +10,8 @@
                     rows="4" :class="{'error-input': emptyContent}"></textarea>
                 <p v-if="emptyContent" class="error-text">Missing Content</p>
                 <div>
-                    <button class="note-save-button" @click="saveDialog">Save</button>
-                    <button class="note-cancel-button" @click="cancelDialog">Cancel</button>
+                    <button class="note-save-button" @click="saveDialog" data-cy="submit">Save</button>
+                    <button class="note-cancel-button" @click="cancelDialog" data-cy="cancel">Cancel</button>
                 </div>
             </form>
         </div>

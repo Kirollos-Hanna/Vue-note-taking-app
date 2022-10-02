@@ -7,10 +7,10 @@
                         <div class="head-cell-container">
                             <label class="form-control">
                                 <input class="note-item-checkbox" v-model="mainCheckBoxCheck" type="checkbox"
-                                    @click="showAllDeleteAction" />
+                                    @click="showAllDeleteAction" data-cy="checkbox-main" />
                                 <p>ID</p>
                             </label>
-                            <div class="sorting-arrows" @click="sortColumn('id')">
+                            <div class="sorting-arrows" @click="sortColumn('id')" data-cy="sort-id">
                                 <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'id'}"></div>
                                 <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'id'}"></div>
                             </div>
@@ -19,7 +19,7 @@
                     <td>
                         <div class="head-cell-container">
                             <p>Title</p>
-                            <div class="sorting-arrows" @click="sortColumn('title')">
+                            <div class="sorting-arrows" @click="sortColumn('title')" data-cy="sort-title">
                                 <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'title'}"></div>
                                 <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'title'}"></div>
                             </div>
@@ -28,7 +28,7 @@
                     <td>
                         <div class="head-cell-container">
                             <p>Content</p>
-                            <div class="sorting-arrows" @click="sortColumn('content')">
+                            <div class="sorting-arrows" @click="sortColumn('content')" data-cy="sort-content">
                                 <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'content'}"></div>
                                 <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'content'}">
                                 </div>
@@ -38,7 +38,7 @@
                     <td class="last-column">
                         <div class="head-cell-container">
                             <p>Status</p>
-                            <div class="sorting-arrows" @click="sortColumn('status')">
+                            <div class="sorting-arrows" @click="sortColumn('status')" data-cy="sort-status">
                                 <div class="up-arrow" :class="{'sorted-up-arrow': sortingColumn === 'status'}"></div>
                                 <div class="down-arrow" :class="{'sorted-down-arrow': sortingColumn === 'status'}">
                                 </div>
@@ -52,7 +52,7 @@
                     <td>
                         <label class="form-control">
                             <input class="note-item-checkbox" v-model="allCheckedBoxes[note['id']]" type="checkbox"
-                                @click="showDeleteAction(note['id'])" />{{note["id"]}}
+                                @click="showDeleteAction(note['id'])" :data-cy="'checkbox-'+note['id']" />{{note["id"]}}
                         </label>
                     </td>
                     <td>{{note["title"]}}</td>
@@ -289,7 +289,7 @@ export default {
                     this.sortingColumn = ""
                 }
             }
-            
+
             if (this.sortingColumn && this.sortingColumn !== "id") {
                 let notesToSort = [...this.notes]
                 this.sortedNotes = notesToSort.sort((a, b) => {
@@ -307,7 +307,6 @@ export default {
             } else {
                 this.sortedNotes = [...this.notes]
             }
-            console.log(this.sortedNotes)
         }
     },
     computed: {
@@ -331,8 +330,8 @@ export default {
             handler(newVal, oldVal) {
                 if (newVal.length) {
                     this.allCheckedBoxes[newVal[newVal.length - 1]["id"]] = false
-                    this.sortColumn()
                 }
+                this.sortColumn()
             },
             deep: true,
             immediate: true,
